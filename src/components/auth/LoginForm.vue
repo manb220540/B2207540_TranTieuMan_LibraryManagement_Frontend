@@ -131,12 +131,14 @@
   
           if (userType.value === 'staff') {
             await store.dispatch('auth/loginStaff', {
+                // /loginStaff
               MSNV: credentials.value.MSNV,
               password: credentials.value.password
             });
             router.push('/admin');
           } else {
             await store.dispatch('auth/loginReader', {
+                // /loginReader
               email: credentials.value.email,
               password: credentials.value.password
             });

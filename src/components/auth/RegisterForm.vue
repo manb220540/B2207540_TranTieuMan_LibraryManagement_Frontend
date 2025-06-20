@@ -115,7 +115,7 @@
             return;
           }
   
-          await store.dispatch('auth/register', formData.value);
+          await store.dispatch('auth/registerReader', formData.value);
           showSuccess('Đăng ký thành công');
           router.push('/reader');
         } catch (err) {

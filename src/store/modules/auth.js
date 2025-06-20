@@ -1,3 +1,4 @@
+// src/store/modules/auth.js
 import api from '@/services/api';
 
 export default {
