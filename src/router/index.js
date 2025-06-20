@@ -6,6 +6,8 @@ import RegisterView from '../views/RegisterView.vue';
 import AdminDashboard from '../views/AdminDashboard.vue';
 import ReaderDashboard from '../views/ReaderDashboard.vue';
 import store from '../store';
+import ForgotPassword from '../views/ForgotPassword.vue';
+import ConfirmPassword from '../views/ConfirmPassword.vue';
 
 const routes = [
   {
@@ -37,6 +39,18 @@ const routes = [
     name: 'reader',
     component: ReaderDashboard,
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/forgot-password',
+    name: 'forgot-password',
+    component: ForgotPassword,
+    meta: { guestOnly: true }
+  },
+  {
+    path: '/auth/reader/password/reset',
+    name: 'confirm-password',
+    component: ConfirmPassword,
+    meta: { guestOnly: true }
   }
 ];
 

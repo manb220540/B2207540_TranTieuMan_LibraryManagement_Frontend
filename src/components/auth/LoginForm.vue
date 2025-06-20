@@ -23,6 +23,9 @@
           <div v-if="error" class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
             {{ error }}
             <button type="button" class="btn-close" @click="clearError"></button>
+            <div v-if="loginAttempts >= 5" class="mt-2">
+              <router-link to="/forgot-password" class="text-primary">Quên mật khẩu? Nhấn vào đây để đổi mật khẩu.</router-link>
+            </div>
           </div>
   
           <form @submit.prevent="handleSubmit" novalidate>
@@ -54,15 +57,23 @@
               </div>
             </div>
   
-            <div class="mb-3">
+            <div class="mb-3 position-relative">
               <label class="form-label">Mật khẩu <span class="text-danger">*</span></label>
               <input 
-                type="password" 
+                :type="showPassword ? 'text' : 'password'" 
                 class="form-control"
                 :class="{ 'is-invalid': errors.password }"
                 v-model="credentials.password" 
                 required
               >
+              <button
+                type="button"
+                class="btn btn-outline-secondary position-absolute top-50 end-0 translate-middle-y me-2"
+                @click="togglePasswordVisibility"
+                style="z-index: 1;"
+              >
+                <i :class="showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+              </button>
               <div class="invalid-feedback" v-if="errors.password">
                 {{ errors.password }}
               </div>
@@ -71,17 +82,17 @@
             <button type="submit" class="btn btn-primary w-100" :disabled="loading">
               {{ loading ? 'Đang xử lý...' : 'Đăng nhập' }}
             </button>
-              <div class="card-footer text-center">
-                  <p class="mb-0">
-                  Chưa có tài khoản? 
-                  <router-link to="/register" class="text-primary">Đăng ký ngay</router-link>
-                  </p>
-              </div>
+            <div class="card-footer text-center">
+              <p class="mb-0">
+                Chưa có tài khoản? 
+                <router-link to="/register" class="text-primary">Đăng ký ngay</router-link>
+              </p>
+            </div>
           </form>
         </div>
       </div>
     </div>
-  </template>
+    </template>
   
   <script>
   import { ref, computed } from 'vue';
@@ -103,6 +114,8 @@
         password: ''
       });
       const errors = ref({});
+      const loginAttempts = ref(0); // Theo dõi số lần thử
+      const showPassword = ref(false); // Trạng thái hiển thị mật khẩu
   
       const loading = computed(() => store.state.auth.loading);
       const error = computed(() => store.state.auth.error);
@@ -114,9 +127,15 @@
         }
         if (userType.value === 'reader' && !credentials.value.email) {
           errors.email = 'Email là bắt buộc';
+        } else if (userType.value === 'reader' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(credentials.value.email)) {
+          errors.email = 'Email không hợp lệ';
         }
         if (!credentials.value.password) {
           errors.password = 'Mật khẩu là bắt buộc';
+        } else if (credentials.value.password.length < 5) {
+          errors.password = 'Mật khẩu phải có ít nhất 5 ký tự';
+        } else if (!/(?=.*[A-Za-z])(?=.*\d).+/.test(credentials.value.password)) {
+          errors.password = 'Mật khẩu phải chứa cả chữ và số';
         }
         return errors;
       };
@@ -128,22 +147,22 @@
             errors.value = validationErrors;
             return;
           }
+          loginAttempts.value += 1; // Tăng số lần thử khi gửi request
   
           if (userType.value === 'staff') {
             await store.dispatch('auth/loginStaff', {
-                // /loginStaff
               MSNV: credentials.value.MSNV,
               password: credentials.value.password
             });
             router.push('/admin');
           } else {
             await store.dispatch('auth/loginReader', {
-                // /loginReader
               email: credentials.value.email,
               password: credentials.value.password
             });
             router.push('/reader');
           }
+          loginAttempts.value = 0; // Reset khi đăng nhập thành công
         } catch (err) {
           showError(err);
         }
@@ -153,6 +172,10 @@
         store.commit('auth/SET_ERROR', null);
       };
   
+      const togglePasswordVisibility = () => {
+        showPassword.value = !showPassword.value;
+      };
+  
       return {
         userType,
         credentials,
@@ -160,7 +183,10 @@
         error,
         errors,
         handleSubmit,
-        clearError
+        clearError,
+        loginAttempts,
+        showPassword,
+        togglePasswordVisibility
       };
     }
   };
@@ -178,5 +204,9 @@
     background-color: transparent;
     border-top: 1px solid rgba(0,0,0,.125);
     padding: 1rem;
+  }
+  .position-relative .btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
   }
   </style>

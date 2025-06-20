@@ -97,14 +97,30 @@
                       <label class="form-label">Số điện thoại</label>
                       <input type="tel" class="form-control" v-model="staffForm.soDienThoai" required>
                   </div>
-                  <div class="mb-3">
-                      <label class="form-label">Mật khẩu</label>
-                      <input type="password" class="form-control" v-model="staffForm.password" 
-                          :required="!editingStaff">
-                  <small class="text-muted" v-if="editingStaff">
-                      Để trống nếu không muốn thay đổi mật khẩu
-                  </small>
-                  </div>
+                  <div class="mb-3 position-relative">
+                <label class="form-label">Mật khẩu</label>
+                <input
+                  :type="showPassword ? 'text' : 'password'"
+                  class="form-control"
+                  :class="{ 'is-invalid': errors.password }"
+                  v-model="staffForm.password"
+                  :required="!editingStaff"
+                >
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary position-absolute top-50 end-0 translate-middle-y me-2"
+                  @click="togglePasswordVisibility"
+                  style="z-index: 1;"
+                >
+                  <i :class="showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+                </button>
+                <div class="invalid-feedback" v-if="errors.password">
+                  {{ errors.password }}
+                </div>
+                <small class="text-muted" v-if="editingStaff">
+                  Để trống nếu không muốn thay đổi mật khẩu
+                </small>
+              </div>
                   <button type="submit" class="btn btn-primary">
                       {{ editingStaff ? 'Cập nhật' : 'Thêm mới' }}
                   </button>
@@ -164,6 +180,7 @@
         password: ''
       }); 
       const errors = ref({});
+      const showPassword = ref(false); // Thêm trạng thái hiển thị mật khẩu
   
       const fetchStaff = async () => {
         loading.value = true;
@@ -252,6 +269,10 @@
       const clearError = () => {
         error.value = null;
       };
+
+      const togglePasswordVisibility = () => {
+      showPassword.value = !showPassword.value;
+      };
   
       onMounted(fetchStaff);
   
@@ -273,7 +294,9 @@
         confirmDelete,
         closeDeleteModal,
         handleDelete,
-        clearError
+        clearError,
+        showPassword,
+        togglePasswordVisibility
       };
     }
   };

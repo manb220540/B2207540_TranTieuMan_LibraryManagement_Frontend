@@ -106,7 +106,34 @@ export default {
         commit('SET_LOADING', false);
       }
     },
-
+    async requestPasswordReset({ commit }, { email }) {
+        try {
+          commit('SET_LOADING', true);
+          commit('SET_ERROR', null);
+          const response = await api.post('/auth/reader/password/request-reset', { email });
+          return response.data; // Trả về message từ backend
+        } catch (error) {
+          commit('SET_ERROR', error.response?.data?.error || 'Yêu cầu đổi mật khẩu thất bại');
+          throw error;
+        } finally {
+          commit('SET_LOADING', false);
+        }
+    },
+  
+    async confirmPasswordReset({ commit }, { email, otp, newPassword }) {
+        try {
+          commit('SET_LOADING', true);
+          commit('SET_ERROR', null);
+          const response = await api.post('/auth/reader/password/reset', { email, otp, newPassword });
+          commit('CLEAR_AUTH'); // Xóa trạng thái auth sau khi đổi mật khẩu thành công
+          return response.data; // Trả về message từ backend
+        } catch (error) {
+          commit('SET_ERROR', error.response?.data?.error || 'Xác nhận đổi mật khẩu thất bại');
+          throw error;
+        } finally {
+          commit('SET_LOADING', false);
+        }
+    },
     logout({ commit }) {
       commit('CLEAR_AUTH');
     },

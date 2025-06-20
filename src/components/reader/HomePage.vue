@@ -4,38 +4,35 @@
       <div class="container py-5">
         <div class="row">
           <div class="col-md-8 mx-auto text-center">
-            <h1 class="display-4 mb-4">Chào mừng đến với Thư viện PL</h1>
+            <h1 class="display-4 mb-4">Chào mừng đến với Thư viện sách TM</h1>
             <p class="lead mb-5">
               Khám phá kho tàng sách phong phú của chúng tôi và tận hưởng trải nghiệm đọc sách tuyệt vời.
             </p>
             
             <!-- Thống kê -->
             <div class="row mb-5">
-              <div class="col-md-4">
-                <div class="card">
-                  <div class="card-body">
-                    <h3 class="card-title">{{ totalBooks }}</h3>
-                    <p class="card-text">Số sách của chúng tôi</p>
-                  </div>
+                <div class="col-md-4">
+                    <div class="card mb-3"> <div class="card-body">
+                            <h3 class="card-title text-success">{{ totalBooks }}</h3>
+                            <p class="card-text">Số sách của chúng tôi</p>
+                        </div>
+                    </div>
                 </div>
-              </div>
-              <div class="col-md-4">
-                <div class="card">
-                  <div class="card-body">
-                    <h3 class="card-title">{{ totalPublishers }}</h3>
-                    <p class="card-text">Số nhà xuất bản</p>
-                  </div>
+                <div class="col-md-4">
+                    <div class="card mb-3"> <div class="card-body">
+                            <h3 class="card-title text-warning">{{ totalPublishers }}</h3>
+                            <p class="card-text">Số nhà xuất bản chúng tôi có</p>
+                        </div>
+                    </div>
                 </div>
-              </div>
-              <div class="col-md-4">
-                <div class="card">
-                  <div class="card-body">
-                    <h3 class="card-title">{{ approvedBooks }}</h3>
-                    <p class="card-text">Số sách bạn đã mượn</p>
-                  </div>
-                </div>
-              </div>
+                <div class="col-md-4">
+                    <div class="card mb-3"> <div class="card-body">
+                            <h3 class="card-title text-danger">{{ approvedBooks }}</h3>
+                            <p class="card-text">Số sách bạn đã mượn</p>
+                        </div>
+                    </div>
             </div>
+        </div>
   
             <!-- Hướng dẫn -->
             <div class="guide-section">
@@ -131,6 +128,15 @@
   
   .guide-section .fas {
     margin-right: 8px;
+  }
+  .text-danger {
+    color: #dc3545 !important;
+  }
+  .text-warning {
+    color: #ffc107 !important;
+  }
+  .text-success {
+    color: #198754 !important;
   }
   
   </style>
