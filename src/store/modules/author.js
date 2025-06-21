@@ -3,13 +3,13 @@ import api from '@/services/api';
 export default {
   namespaced: true,
   state: {
-    books: [],
+    authors: [],
     loading: false,
     error: null
   },
   mutations: {
-    SET_BOOKS(state, books) {
-      state.books = books;
+    SET_AUTHORS(state, authors) {
+      state.authors = authors;
     },
     SET_LOADING(state, status) {
       state.loading = status;
@@ -19,39 +19,39 @@ export default {
     }
   },
   actions: {
-    async fetchBooks({ commit }) {
+    async fetchAuthors({ commit }) {
       try {
         commit('SET_LOADING', true);
-        const response = await api.get('/sach');
-        console.log('API response:', response.data); // Debugging line
-        commit('SET_BOOKS', response.data);
+        const response = await api.get('/tacgia');
+        console.log('API response:', response.data); // the bug
+        commit('SET_AUTHORS', response.data);
       } catch (error) {
         commit('SET_ERROR', error.message);
       } finally {
         commit('SET_LOADING', false);
       }
     },
-    async createBook({ commit }, bookData) {
+    async createAuthor({ commit }, authorData) {
       try {
-        const response = await api.post('/sach', bookData);
+        const response = await api.post('/tacgia', authorData);
         return response.data;
       } catch (error) {
         commit('SET_ERROR', error.message);
         throw error;
       }
     },
-    async updateBook({ commit }, { id, bookData }) {
+    async updateAuthor({ commit }, { id, authorData }) {
       try {
-        const response = await api.put(`/sach/${id}`, bookData);
+        const response = await api.put(`/tacgia/${id}`, authorData);
         return response.data;
       } catch (error) {
         commit('SET_ERROR', error.message);
         throw error;
       }
     },
-    async deleteBook({ commit }, id) {
+    async deleteAuthor({ commit }, id) {
       try {
-        await api.delete(`/sach/${id}`);
+        await api.delete(`/tacgia/${id}`);
       } catch (error) {
         commit('SET_ERROR', error.message);
         throw error;
@@ -59,7 +59,7 @@ export default {
     }
   },
   getters: {
-    allBooks: state => state.books,
+    allAuthors: state => state.authors,
     isLoading: state => state.loading,
     error: state => state.error
   }

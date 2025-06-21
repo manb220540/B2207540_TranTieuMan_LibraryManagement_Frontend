@@ -41,6 +41,7 @@
               <th>Mã sách</th>
               <th>Tên sách</th>
               <th>Nhà xuất bản</th>
+              <th>Tác giả</th>
               <th>Đơn giá</th>
               <th>Số quyển</th>
               <th>Năm XB</th>
@@ -53,6 +54,7 @@
               <td>{{ book.maSach }}</td>
               <td>{{ book.tenSach }}</td>
               <td>{{ book.maNXB?.tenNXB }}</td>
+              <td>{{ book.maTacGia?.tenTacGia }}</td>
               <td>{{ formatCurrency(book.donGia) }}</td>
               <td :class="getQuantityClass(book.soQuyen)">
                 {{ book.soQuyen }}
@@ -129,6 +131,23 @@
                   </select>
                   <div class="invalid-feedback" v-if="errors.maNXB">
                     {{ errors.maNXB }}
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Tác giả <span class="text-danger">*</span></label>
+                  <select 
+                    class="form-select"
+                    :class="{ 'is-invalid': errors.tacGia }"
+                    v-model="bookForm.tacGia"
+                    required
+                  >
+                    <option value="">Chọn tác giả</option>
+                    <option v-for="author in authors" :key="author._id" :value="author._id">
+                      {{ author.tenTacGia }}
+                    </option>
+                  </select>
+                  <div class="invalid-feedback" v-if="errors.tacGia">
+                    {{ errors.tacGia }}
                   </div>
                 </div>
   
@@ -253,6 +272,7 @@
         maSach: '',
         tenSach: '',
         maNXB: '',
+        tacGia: '',
         donGia: 0,
         soQuyen: 0,
         namXuatBan: new Date().getFullYear(),
@@ -263,6 +283,7 @@
       const error = computed(() => store.getters['book/error']);
       const books = computed(() => store.getters['book/allBooks']);
       const publishers = computed(() => store.getters['publisher/allPublishers']);
+      const authors = computed(() => store.getters['author/allAuthors']);
   
       const filteredBooks = computed(() => {
         if (!searchTerm.value) return books.value;
@@ -270,7 +291,9 @@
         return books.value.filter(book => 
           book.maSach.toLowerCase().includes(search) ||
           book.tenSach.toLowerCase().includes(search) ||
-          book.maNXB?.tenNXB.toLowerCase().includes(search)
+          book.maNXB?.tenNXB.toLowerCase().includes(search) ||
+          book.maTacGia?.tenTacGia.toLowerCase().includes(search) ||
+          book.nguonGoc.toLowerCase().includes(search)
         );
       });
   
@@ -278,7 +301,8 @@
         try {
           await Promise.all([
             store.dispatch('book/fetchBooks'),
-            store.dispatch('publisher/fetchPublishers')
+            store.dispatch('publisher/fetchPublishers'),
+            store.dispatch('author/fetchAuthors')
           ]);
         } catch (error) {
           showError(error);
@@ -293,6 +317,7 @@
           maSach: '',
           tenSach: '',
           maNXB: '',
+          tacGia: '',
           donGia: 0,
           soQuyen: 0,
           namXuatBan: new Date().getFullYear(),
@@ -384,6 +409,7 @@
         errors,
         books,
         publishers,
+        authors,
         searchTerm,
         filteredBooks,
         closeModal,

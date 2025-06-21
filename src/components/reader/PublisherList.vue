@@ -87,7 +87,7 @@
                 </table>
               </div>
             </div>
-          </div>
+        </div>
         </div>
       </div>
       <div class="modal-backdrop fade show" v-if="showBooksModal"></div>

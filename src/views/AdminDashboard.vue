@@ -2,7 +2,9 @@
     <div class="admin-dashboard">
       <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
-          <a class="navbar-brand" href="#">Quản lý thư viện</a>
+          <a class="navbar-brand" href="#" @click.prevent="currentComponent = 'AdminHomePage'">
+            <i class="fas fa-book-reader me-2"></i>Quản lý thư viện
+        </a>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
           </button>
@@ -18,6 +20,12 @@
                 <a class="nav-link" :class="{ active: currentComponent === 'PublisherManagement' }"
                    @click.prevent="currentComponent = 'PublisherManagement'">
                   Quản lý NXB
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" :class="{ active: currentComponent === 'AuthorManagement' }"
+                   @click.prevent="currentComponent = 'AuthorManagement'">
+                  Quản lý tác giả
                 </a>
               </li>
               <li class="nav-item">
@@ -68,6 +76,9 @@
   import StaffManagement from '@/components/admin/StaffManagement.vue';
   import ReaderManagement from '@/components/admin/ReaderManagement.vue';
   import BorrowManagement from '@/components/admin/BorrowManagement.vue';
+  import AuthorManagement from '@/components/admin/AuthorManagement.vue';
+  import AdminHomePage from '@/components/admin/AdminHomePage.vue';
+
   
   export default {
     name: 'AdminDashboard',
@@ -76,13 +87,15 @@
       PublisherManagement,
       StaffManagement,
       ReaderManagement,
-      BorrowManagement
+      BorrowManagement,
+      AuthorManagement,
+      AdminHomePage
     },
     setup() {
       const store = useStore();
       const router = useRouter();
       
-      const currentComponent = ref(localStorage.getItem('adminCurrentComponent') || 'BookManagement');
+      const currentComponent = ref(localStorage.getItem('adminCurrentComponent') || 'AdminHomePage');
       
       watch(currentComponent, (newValue) => {
         localStorage.setItem('adminCurrentComponent', newValue);

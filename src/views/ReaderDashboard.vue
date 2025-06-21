@@ -23,6 +23,12 @@
                 </a>
               </li>
               <li class="nav-item">
+                <a class="nav-link" :class="{ active: currentComponent === 'AuthorList' }"
+                   @click="currentComponent = 'AuthorList'">
+                  Tác giả
+                </a>
+              </li>
+              <li class="nav-item">
                 <a class="nav-link" :class="{ active: currentComponent === 'BorrowHistory' }"
                    @click="currentComponent = 'BorrowHistory'">
                   Lịch sử mượn sách
@@ -60,9 +66,10 @@
           <div class="col-md-4 mb-4">
             <h5>Liên kết nhanh</h5>
             <ul class="list-unstyled">
-              <li><a href="#" @click.prevent="$parent.currentComponent = 'BookList'">Danh sách sách</a></li>
-              <li><a href="#" @click.prevent="$parent.currentComponent = 'PublisherList'">Nhà xuất bản</a></li>
-              <li><a href="#" @click.prevent="$parent.currentComponent = 'BorrowHistory'">Lịch sử mượn sách</a></li>
+                <li><a href="#" @click.prevent="navigateTo('BookList')">Danh sách sách</a></li>
+                <li><a href="#" @click.prevent="navigateTo('PublisherList')">Nhà xuất bản</a></li>
+                <li><a href="#" @click.prevent="navigateTo('AuthorList')">Tác giả</a></li>
+                <li><a href="#" @click.prevent="navigateTo('BorrowHistory')">Lịch sử mượn sách</a></li>
             </ul>
           </div>
           <div class="col-md-4 mb-4">
@@ -98,6 +105,7 @@
   import HomePage from '@/components/reader/HomePage.vue';
   import BookList from '@/components/reader/BookList.vue';
   import PublisherList from '@/components/reader/PublisherList.vue';
+  import AuthorList from '@/components/reader/AuthorList.vue';
   import BorrowHistory from '@/components/reader/BorrowHistory.vue';
   
   export default {
@@ -106,6 +114,7 @@
       HomePage,
       BookList,
       PublisherList,
+      AuthorList,
       BorrowHistory
     },
     setup() {
@@ -126,12 +135,16 @@
         localStorage.removeItem('readerCurrentComponent');
         router.push('/login');
       };
+      const navigateTo = (componentName) => {
+        currentComponent.value = componentName;
+      };
   
       return {
         currentComponent,
         currentUser,
         handleLogout,
-        currentYear
+        currentYear,
+        navigateTo
       };
     }
   };

@@ -59,3 +59,16 @@ export const validateStaffForm = (staff) => {
     errors
   };
 };
+
+export const validateAuthorForm = (author) => {
+  const errors = {};
+  
+  if (!author.maTacGia) errors.maTacGia = 'Mã tác giả là bắt buộc';
+  if (!author.tenTacGia) errors.tenTacGia = 'Họ tên là bắt buộc';
+  
+  
+  return {
+    isValid: Object.keys(errors).length === 0,
+    errors
+  };
+}

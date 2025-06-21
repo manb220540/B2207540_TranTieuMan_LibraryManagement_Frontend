@@ -11,21 +11,28 @@
             
             <!-- Thống kê -->
             <div class="row mb-5">
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="card mb-3"> <div class="card-body">
                             <h3 class="card-title text-success">{{ totalBooks }}</h3>
                             <p class="card-text">Số sách của chúng tôi</p>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="card mb-3"> <div class="card-body">
                             <h3 class="card-title text-warning">{{ totalPublishers }}</h3>
                             <p class="card-text">Số nhà xuất bản chúng tôi có</p>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
+                    <div class="card mb-3"> <div class="card-body">
+                            <h3 class="card-title text-primary">{{ totalAuthors }}</h3>
+                            <p class="card-text">Số tác giả chúng tôi có</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
                     <div class="card mb-3"> <div class="card-body">
                             <h3 class="card-title text-danger">{{ approvedBooks }}</h3>
                             <p class="card-text">Số sách bạn đã mượn</p>
@@ -84,6 +91,7 @@
       const store = useStore();
       const totalBooks = computed(() => store.getters['book/allBooks'].length);
       const totalPublishers = computed(() => store.getters['publisher/allPublishers'].length);
+      const totalAuthors = computed(() => store.getters['author/allAuthors'].length);
       
   
       const approvedBooks = computed(() => {
@@ -91,19 +99,23 @@
           item => item.trangThai === 'Đã duyệt'
         ).length;
       });
+
+      
   
       onMounted(async () => {
         await Promise.all([
           store.dispatch('book/fetchBooks'),
           store.dispatch('publisher/fetchPublishers'),
-          store.dispatch('borrow/fetchBorrowHistory')
+          store.dispatch('borrow/fetchBorrowHistory'),
+          store.dispatch('author/fetchAuthors')
         ]);
       });
   
       return {
         totalBooks,
         totalPublishers,
-        approvedBooks
+        approvedBooks,
+        totalAuthors
       };
     }
   };
@@ -137,6 +149,9 @@
   }
   .text-success {
     color: #198754 !important;
+  }
+  .text-primary {
+    color: #0d6efd !important;
   }
   
   </style>

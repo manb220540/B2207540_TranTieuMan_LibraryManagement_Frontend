@@ -64,7 +64,10 @@
               <strong>Năm xuất bản:</strong> {{ book.namXuatBan }}
             </p>
             <p class="card-text">
-              <strong>Nguốc gốc/Tác giả:</strong> {{ book.nguonGoc }}
+              <strong>Tác giả:</strong> {{ book.maTacGia?.tenTacGia || 'Chưa có tác giả' }} 
+            </p>
+            <p class="card-text">
+              <strong>Nguốc gốc:</strong> {{ book.nguonGoc }}
             </p>
             <p class="card-text">
               <strong>Số quyển còn:</strong> {{ book.soQuyen }}
@@ -104,7 +107,8 @@
           book.tenSach.toLowerCase().includes(search) ||
           book.maSach.toLowerCase().includes(search) ||
           book.maNXB?.tenNXB.toLowerCase().includes(search) ||
-          book.nguonGoc.toLowerCase().includes(search)
+          book.nguonGoc.toLowerCase().includes(search) ||
+          book.maTacGia.toLowerCase().includes(search)
         );
       });
   

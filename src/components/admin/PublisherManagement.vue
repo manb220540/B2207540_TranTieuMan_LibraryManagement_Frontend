@@ -137,7 +137,7 @@
               <button type="button" class="btn-close" @click="closeDeleteModal"></button>
             </div>
             <div class="modal-body">
-              <p>Bạn có chắc chắn muốn xóa nhà xuất bản "{{ selectedPublisher?.tenNXB }}" không?</p>
+              <p>Bạn có chắc chắn muốn xóa nhà xuất bản "<strong>{{ selectedPublisher?.tenNXB }}</strong>" không?</p>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" @click="closeDeleteModal">Hủy</button>
@@ -269,7 +269,7 @@
       };
   
       const clearError = () => {
-        store.commit('publisher/clearError');
+        store.commit('publisher/SET_ERROR', null);
       };
   
       onMounted(fetchPublishers);
