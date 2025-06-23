@@ -37,7 +37,7 @@
             </ul>
             <ul class="navbar-nav">
               <li class="nav-item me-3">
-                <span class="nav-link">
+                <span class="nav-link" style="cursor: pointer;" @click="currentComponent = 'UserProfile'">
                   Xin chào, {{ currentUser?.hoLot }} {{ currentUser?.ten || 'Độc giả' }}
                 </span>
               </li>
@@ -107,6 +107,7 @@
   import PublisherList from '@/components/reader/PublisherList.vue';
   import AuthorList from '@/components/reader/AuthorList.vue';
   import BorrowHistory from '@/components/reader/BorrowHistory.vue';
+  import UserProfile from '@/components/reader/UserProfile.vue';
   
   export default {
     name: 'ReaderDashboard',
@@ -115,7 +116,8 @@
       BookList,
       PublisherList,
       AuthorList,
-      BorrowHistory
+      BorrowHistory,
+      UserProfile
     },
     setup() {
       const store = useStore();
@@ -199,6 +201,10 @@
   }
   
   .social-links a:hover {
+    transform: translateY(-3px);
+    background-color: #0b5ed7;
+  }
+  .social-links span:hover {
     transform: translateY(-3px);
     background-color: #0b5ed7;
   }
