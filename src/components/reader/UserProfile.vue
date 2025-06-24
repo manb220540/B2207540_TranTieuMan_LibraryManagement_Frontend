@@ -98,6 +98,16 @@
               :class="{ 'is-invalid': errors.email }"
             >
             <div class="invalid-feedback" v-if="errors.email">{{ errors.email }}</div>
+        
+          <br>
+          <div class="mb-3">
+          <router-link to="/forgot-password" class="text-primary">Quên mật khẩu? Nhấn vào đây để đổi mật khẩu.</router-link>
+          </div>
+          <br>
+            <div v-if="message" class="alert alert-success alert-dismissible fade show mb-3" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" @click="clearMessage"></button>
+          </div>
           </div>
   
           <div class="text-end">
@@ -115,6 +125,7 @@
   import { ref, computed, onMounted } from 'vue';
   import { useStore } from 'vuex';
   import { showError, showSuccess } from '@/utils/notifications';
+  import { useRouter } from 'vue-router';
   
   
   export default {
@@ -130,9 +141,13 @@
         dienThoai: '',
         email: ''
       });
+
+      const router = useRouter(); //
       const errors = ref({});
       const loading = ref(false);
       const error = ref(null); //
+      const message = ref(''); //
+      
        
 
       // Hàm chuyển đổi định dạng ISO sang yyyy-MM-dd
@@ -192,12 +207,14 @@
           ngaySinh: formatDate(response.data.ngaySinh) // Đảm bảo định dạng sau khi cập nhật
         };
         showSuccess(response.data.message || 'Cập nhật thông tin thành công');
+        message.value = 'Cập nhật thông tin thành công';
         
     } catch (err) {
         error.value = err.message || 'Cập nhật thông tin thất bại';
         errors.value = err.response?.data?.errors || {};
         console.error('Update profile error:', err.response?.data || err.message); // Debug
         showError(error.value);
+        message.value = 'Cập nhật thông tin thất bại';
         
     } finally {
         loading.value = false;
@@ -207,6 +224,7 @@
     const clearError = () => {
         store.commit('publisher/SET_ERROR', null); //
       };
+      const clearMessage = () => { message.value = ''; };
     
   
       const cancelUpdate = () => {
@@ -221,6 +239,8 @@
         loading,
         error,
         clearError, //
+        clearMessage, //
+        message, //
         handleUpdateProfile,
         cancelUpdate
       };

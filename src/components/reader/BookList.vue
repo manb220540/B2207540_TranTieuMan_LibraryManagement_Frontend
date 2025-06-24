@@ -98,20 +98,7 @@
     name: 'BookList',
     components: { LoadingSpinner },
     setup() {
-      const store = useStore();
-      const books = computed(() => {
-        if (!searchTerm.value.trim()) return store.getters['book/allBooks'];
-        
-        const search = searchTerm.value.toLowerCase().trim();
-        return store.getters['book/allBooks'].filter(book => 
-          book.tenSach.toLowerCase().includes(search) ||
-          book.maSach.toLowerCase().includes(search) ||
-          book.maNXB?.tenNXB.toLowerCase().includes(search) ||
-          book.nguonGoc.toLowerCase().includes(search) ||
-          book.maTacGia.toLowerCase().includes(search)
-        );
-      });
-  
+      
       const { proxy } = getCurrentInstance();
       const error = ref(null);
       const loading = ref(false);
@@ -119,6 +106,21 @@
       const selectedBook = ref(null);
       const selectedBookId = ref(null);
       const showConfirmModal = ref(false);
+      const store = useStore();
+      const allBooks = computed(() => store.getters['book/allBooks']);
+
+      const books = computed(() => {
+        if (!searchTerm.value) return allBooks.value;
+        
+        const search = searchTerm.value.toLowerCase().trim();
+        return allBooks.value.filter(book => 
+          book.tenSach.toLowerCase().includes(search) ||
+          book.maSach.toLowerCase().includes(search) ||
+          book.maNXB?.tenNXB.toLowerCase().includes(search) ||
+          book.nguonGoc.toLowerCase().includes(search) ||
+          book.maTacGia?.tenTacGia && book.maTacGia.tenTacGia.toLowerCase().includes(search)
+        );
+      });
   
       const fetchBooks = async () => {
         try {

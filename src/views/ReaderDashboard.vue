@@ -156,6 +156,7 @@
   .nav-link {
     cursor: pointer;
   }
+  
   .navbar-nav .nav-item .nav-link {
     color: rgba(255, 255, 255, 0.9) !important;
   }

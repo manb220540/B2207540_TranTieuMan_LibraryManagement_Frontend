@@ -44,13 +44,15 @@ const routes = [
     path: '/forgot-password',
     name: 'forgot-password',
     component: ForgotPassword,
-    meta: { guestOnly: true }
+    // meta: { guestOnly: true }
+    meta: { requiresAuth: false }
   },
   {
     path: '/auth/reader/password/reset',
     name: 'confirm-password',
     component: ConfirmPassword,
-    meta: { guestOnly: true }
+    // meta: { guestOnly: true }
+    meta: { requiresAuth: false }
   }
 ];
 
