@@ -20,9 +20,9 @@
                         placeholder="Tìm kiếm tác giả theo tên hoặc mã tác giả"
                         
                     >
-                    <button class="btn btn-outline-secondary" type="button" @click="handleSearch">
+                    <span class="input-group-text">
                     <i class="fas fa-search"></i>
-                    </button>
+                    </span>
                 </div>
             </div>
         </div>
@@ -138,9 +138,7 @@ export default {
         currency: 'VND'
       }).format(value);
     };
-    const handleSearch = () => {
-      // Filtering is handled by computed property
-    };
+    
     const showAuthorBooks = (author) => {
       selectedAuthor.value = author;
       showBooksModal.value = true;
@@ -172,7 +170,6 @@ export default {
         showBooksModal,
         selectedAuthor,
         authorBooks,
-        handleSearch,
         showAuthorBooks,
         closeBooksModal,
         getAuthorBookCount,
@@ -199,4 +196,20 @@ export default {
     .table {
     margin-bottom: 0;
     }
+    .input-group {
+    max-width: 500px;
+  }
+  
+  .input-group-text {
+    background-color: white;
+    border-left: none;
+  }
+  
+  .form-control:focus + .input-group-text {
+    border-color: #86b7fe;
+  }
+  
+  .form-control {
+    border-right: none;
+  }
 </style>
