@@ -52,6 +52,9 @@
       <div class="row row-cols-1 row-cols-md-3 g-4">
       <div class="col" v-for="book in books" :key="book._id">
         <div class="card h-100">
+          <div class="card-img-top" style="height: 200px; overflow: hidden;">
+            <img :src="`${API_URL}/${book.imagePath || 'uploads/default-book.jpg'}`" style="width: 100%; height: 100%; object-fit: cover;" alt="Book cover">
+          </div>
           <div class="card-body">
             <h5 class="card-title">{{ book.tenSach }}</h5>
             <p class="card-text">
@@ -107,6 +110,7 @@
       const selectedBookId = ref(null);
       const showConfirmModal = ref(false);
       const store = useStore();
+      const API_URL = import.meta.env.VITE_API_IMAGE_URL;
       const allBooks = computed(() => store.getters['book/allBooks']);
 
       const books = computed(() => {
@@ -126,7 +130,7 @@
         try {
           loading.value = true;
           await store.dispatch('book/fetchBooks');
-          books.value = store.getters['book/allBooks'];
+          // books.value = store.getters['book/allBooks'];
         } catch (err) {
           error.value = err.message;
           console.error('Error fetching books:', err);
@@ -178,7 +182,8 @@
         closeConfirmModal,
         handleConfirmBorrow,
         selectedBook,
-        clearError
+        clearError,
+        API_URL
       };
     }
   };

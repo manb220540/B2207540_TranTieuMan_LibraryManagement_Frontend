@@ -47,6 +47,7 @@
             <th>Số quyển</th>
             <th>Năm XB</th>
             <th>Nguồn gốc</th>
+            <th>Hình ảnh</th>
             <th>Thao tác</th>
           </tr>
         </thead>
@@ -66,6 +67,10 @@
             </td>
             <td>{{ book.namXuatBan }}</td>
             <td>{{ book.nguonGoc }}</td>
+            <td>
+              <!-- <div>{{ book.imagePath }}</div> -->
+              <img :src="`${API_URL}/${book.imagePath || 'uploads/default-book.jpg'}`" style="max-width: 100px;" alt="Book cover">
+            </td>
             <td>
               <button class="btn btn-sm btn-info me-2" @click="editBook(book)">
                 <i class="fas fa-edit"></i>
@@ -220,6 +225,15 @@
                   {{ errors.nguonGoc }}
                 </div>
               </div>
+              <div class="mb-3">
+                <label class="form-label">Hình ảnh bìa sách</label>
+                <input 
+                  type="file" 
+                  class="form-control"
+                  @change="handleImageUpload"
+                  accept="image/*"
+                >
+              </div>
 
               <div class="text-end">
                 <button type="button" class="btn btn-secondary me-2" @click="closeModal">Hủy</button>
@@ -277,6 +291,9 @@ export default {
     const selectedBook = ref(null);
     const errors = ref({});
     const searchTerm = ref('');
+    const imagePath = ref(null);
+    const API_URL = import.meta.env.VITE_API_IMAGE_URL;
+
 
     const bookForm = ref({
       maSach: '',
@@ -452,6 +469,7 @@ export default {
         namXuatBan: new Date().getFullYear(),
         nguonGoc: ''
       };
+      imagePath.value = null;
     };
 
     const getQuantityClass = (quantity) => {
@@ -473,7 +491,8 @@ export default {
         maNXB: book.maNXB?._id || book.maNXB || '', 
         maTacGia: book.maTacGia?._id || book.maTacGia || '',
         donGia: book.donGia ?? null,
-        soQuyen: book.soQuyen ?? null
+        soQuyen: book.soQuyen ?? null,
+        imagePath: book.imagePath || 'default-book.jpg'
       };
       showAddModal.value = true;
     };
@@ -503,25 +522,28 @@ export default {
       }
 
       try {
-        const bookData = {
-          maSach: bookForm.value.maSach,
-          tenSach: bookForm.value.tenSach,
-          maNXB: bookForm.value.maNXB,
-          maTacGia: bookForm.value.maTacGia,
-          donGia: Number(bookForm.value.donGia),
-          soQuyen: Number(bookForm.value.soQuyen),
-          namXuatBan: Number(bookForm.value.namXuatBan),
-          nguonGoc: bookForm.value.nguonGoc
-        };
-        console.log('Submitting book:', bookData);
+        const formData = new FormData();
+        formData.append('maSach', bookForm.value.maSach);
+        formData.append('tenSach', bookForm.value.tenSach);
+        formData.append('maNXB', bookForm.value.maNXB);
+        formData.append('maTacGia', bookForm.value.maTacGia);
+        formData.append('donGia', bookForm.value.donGia);
+        formData.append('soQuyen', bookForm.value.soQuyen);
+        formData.append('namXuatBan', bookForm.value.namXuatBan);
+        formData.append('nguonGoc', bookForm.value.nguonGoc);
+        if (imagePath.value) {
+          formData.append('image', imagePath.value);  // 'image' phải khớp tên middleware upload.single('image')
+        }
+
+        console.log('Submitting book:', FormData);
         if (editingBook.value) {
           await store.dispatch('book/updateBook', {
             id: editingBook.value._id,
-            bookData
+            bookData: formData
           });
           showSuccess('Cập nhật sách thành công');
         } else {
-          const response = await store.dispatch('book/createBook', bookData);
+          const response = await store.dispatch('book/createBook', formData);
           console.log('API response:', response);
           showSuccess('Thêm sách mới thành công');
         }
@@ -542,6 +564,10 @@ export default {
           errors.value = { ...errors.value, ...error.response.data.errors };
         }
       }
+    };
+
+    const handleImageUpload = (event) => {
+      imagePath.value = event.target.files[0];
     };
 
     const formatCurrency = (value) => {
@@ -585,7 +611,9 @@ export default {
       formatCurrency,
       clearError,
       validateField,
-      searchBooks
+      searchBooks,
+      handleImageUpload,
+      API_URL
     };
   }
 };
