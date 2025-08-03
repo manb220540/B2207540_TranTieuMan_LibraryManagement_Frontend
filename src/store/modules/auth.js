@@ -1,15 +1,25 @@
 // src/store/modules/auth.js
+
+// Import API instance đã cấu hình axios
 import api from '@/services/api';
 
 export default {
-  namespaced: true,
+  namespaced: true, // Cho phép module này hoạt động độc lập với các module khác
+  
+  // ------------------
+  // STATE - Trạng thái lưu trữ dữ liệu
+  // ------------------
   state: {
-    user: JSON.parse(localStorage.getItem('user')) || null,
-    token: localStorage.getItem('token') || null,
-    userType: localStorage.getItem('userType') || null, // 'admin' hoặc 'reader'
-    loading: false,
-    error: null
+    user: JSON.parse(localStorage.getItem('user')) || null,        // Thông tin người dùng
+    token: localStorage.getItem('token') || null,                   // JWT token
+    userType: localStorage.getItem('userType') || null,            // Loại người dùng: 'admin' hoặc 'reader'
+    loading: false,                                                // Trạng thái đang xử lý (hiện loading)
+    error: null                                                    // Thông báo lỗi
   },
+
+  // ------------------
+  // MUTATIONS - Các hàm thay đổi state
+  // ------------------
   mutations: {
     SET_USER(state, user) {
       state.user = user;
@@ -39,7 +49,12 @@ export default {
       localStorage.removeItem('userType');
     }
   },
+
+  // ------------------
+  // ACTIONS - Các hành động bất đồng bộ gọi API
+  // ------------------
   actions: {
+    // Đăng nhập dành cho nhân viên (admin)
     async loginStaff({ commit }, credentials) {
       try {
         commit('SET_LOADING', true);
@@ -57,6 +72,7 @@ export default {
       }
     },
 
+    // Đăng nhập dành cho độc giả
     async loginReader({ commit }, credentials) {
       try {
         commit('SET_LOADING', true);
@@ -74,6 +90,7 @@ export default {
       }
     },
 
+    // Đăng ký tài khoản dành cho độc giả
     async registerReader({ commit }, userData) {
       try {
         commit('SET_LOADING', true);
@@ -91,12 +108,13 @@ export default {
       }
     },
 
+    // Cập nhật thông tin hồ sơ người dùng (độc giả)
     async updateProfile({ commit, state }, userData) {
       try {
         commit('SET_LOADING', true);
         commit('SET_ERROR', null);
         const response = await api.put('/docgia/profile', userData);
-        const updatedUser = { ...state.user, ...response.data };
+        const updatedUser = { ...state.user, ...response.data }; // Cập nhật thông tin mới vào state
         commit('SET_USER', updatedUser);
         return response;
       } catch (error) {
@@ -106,48 +124,58 @@ export default {
         commit('SET_LOADING', false);
       }
     },
+
+    // Gửi yêu cầu đặt lại mật khẩu (qua email)
     async requestPasswordReset({ commit }, { email }) {
-        try {
-          commit('SET_LOADING', true);
-          commit('SET_ERROR', null);
-          const response = await api.post('/auth/reader/password/request-reset', { email });
-          return response.data; // Trả về message từ backend
-        } catch (error) {
-          commit('SET_ERROR', error.response?.data?.error || 'Yêu cầu đổi mật khẩu thất bại');
-          throw error;
-        } finally {
-          commit('SET_LOADING', false);
-        }
+      try {
+        commit('SET_LOADING', true);
+        commit('SET_ERROR', null);
+        const response = await api.post('/auth/reader/password/request-reset', { email });
+        return response.data; // Trả về message từ backend
+      } catch (error) {
+        commit('SET_ERROR', error.response?.data?.error || 'Yêu cầu đổi mật khẩu thất bại');
+        throw error;
+      } finally {
+        commit('SET_LOADING', false);
+      }
     },
-  
+
+    // Xác nhận đặt lại mật khẩu với OTP
     async confirmPasswordReset({ commit }, { email, otp, newPassword }) {
-        try {
-          commit('SET_LOADING', true);
-          commit('SET_ERROR', null);
-          const response = await api.post('/auth/reader/password/reset', { email, otp, newPassword });
-          commit('CLEAR_AUTH'); // Xóa trạng thái auth sau khi đổi mật khẩu thành công
-          return response.data; // Trả về message từ backend
-        } catch (error) {
-          commit('SET_ERROR', error.response?.data?.error || 'Xác nhận đổi mật khẩu thất bại');
-          throw error;
-        } finally {
-          commit('SET_LOADING', false);
-        }
+      try {
+        commit('SET_LOADING', true);
+        commit('SET_ERROR', null);
+        const response = await api.post('/auth/reader/password/reset', { email, otp, newPassword });
+        commit('CLEAR_AUTH'); // Xóa thông tin người dùng sau khi đổi mật khẩu
+        return response.data;
+      } catch (error) {
+        commit('SET_ERROR', error.response?.data?.error || 'Xác nhận đổi mật khẩu thất bại');
+        throw error;
+      } finally {
+        commit('SET_LOADING', false);
+      }
     },
+
+    // Đăng xuất người dùng
     logout({ commit }) {
       commit('CLEAR_AUTH');
     },
 
+    // Xóa lỗi đang hiển thị
     clearError({ commit }) {
       commit('SET_ERROR', null);
     }
   },
+
+  // ------------------
+  // GETTERS - Các hàm lấy dữ liệu từ state
+  // ------------------
   getters: {
-    isAuthenticated: state => !!state.token,
-    isAdmin: state => state.userType === 'admin',
-    isReader: state => state.userType === 'reader',
-    currentUser: state => state.user,
-    loading: state => state.loading,
-    error: state => state.error
+    isAuthenticated: state => !!state.token,                  // Đã đăng nhập chưa
+    isAdmin: state => state.userType === 'admin',             // Có phải admin không
+    isReader: state => state.userType === 'reader',           // Có phải reader không
+    currentUser: state => state.user,                         // Lấy thông tin người dùng hiện tại
+    loading: state => state.loading,                          // Trạng thái loading
+    error: state => state.error                               // Thông báo lỗi
   }
 };
